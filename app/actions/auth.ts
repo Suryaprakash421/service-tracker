@@ -4,25 +4,34 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function signUpActionn(formData: FormData) {
+export async function signInAction(prevState: any, formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    const session = await auth.api.signInEmail({ body: { email, password } });
+    console.log("Signed in user session:", session);
+    return { success: true };
+  } catch (error: any) {
+    // Return error message for display
+    return { error: error.message || "Invalid credentials" };
+  }
+}
+
+// Similarly for signUpAction (adjust as needed)
+export async function signUpAction(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
 
-  // Call your sign-up logic here, e.g., using better-auth
-  const user = await auth.api.signUpEmail({ body: { email, password, name } });
-
-  return redirect("/");
-}
-
-export async function signInAction(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  // Call your sign-in logic here, e.g., using better-auth
-  const session = await auth.api.signInEmail({ body: { email, password } });
-
-  return redirect("/");
+  try {
+    const user = await auth.api.signUpEmail({
+      body: { email, password, name },
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Sign-up failed" };
+  }
 }
 
 export async function signOutAction() {

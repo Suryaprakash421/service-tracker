@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,12 +17,22 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { signInAction } from "@/app/actions/auth";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [state, action] = useActionState(signInAction, null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/");
+    }
+  }, [state, router]);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -31,7 +43,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={signInAction}>
+          <form action={action}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -64,6 +76,7 @@ export function LoginForm({
                   Don&apos;t have an account? <a href="/signup">Sign up</a>
                 </FieldDescription>
               </Field>
+              {state?.error && <p className="text-red-500">{state.error}</p>}
             </FieldGroup>
           </form>
         </CardContent>

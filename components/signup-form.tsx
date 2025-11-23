@@ -1,4 +1,6 @@
-import { signUpActionn } from "@/app/actions/auth";
+"use client";
+
+import { signUpAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,8 +16,19 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  const [state, action] = useActionState(signUpAction, null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/");
+    }
+  }, [state, router]);
+
   return (
     <Card {...props}>
       <CardHeader>
@@ -25,7 +38,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={signUpActionn}>
+        <form action={action}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
@@ -81,6 +94,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 </FieldDescription>
               </Field>
             </FieldGroup>
+            {state?.error && <p className="text-red-500">{state.error}</p>}
           </FieldGroup>
         </form>
       </CardContent>
