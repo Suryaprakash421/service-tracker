@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, showLoadingToast } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { signInAction } from "@/app/actions/auth";
 import { redirect, useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -27,11 +28,32 @@ export function LoginForm({
   const [state, action] = useActionState(signInAction, null);
   const router = useRouter();
 
-  useEffect(() => {
-    if (state?.success) {
-      router.push("/");
-    }
-  }, [state, router]);
+  // useEffect(() => {
+  //   if (state?.success) {
+  //     router.push("/");
+  //   }
+  //   if (state?.error) {
+  //     toast.error(state.error);
+  //   }
+  // }, [state, router]);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    // Wrap the action to throw an error if the server returns { error: ... }
+    const loginPromise = async () => {
+      const result = await signInAction(null, formData);
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result;
+    };
+
+    showLoadingToast(loginPromise(), () => {
+      router.push("/dashboard");
+    });
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -43,7 +65,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={action}>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -76,7 +98,6 @@ export function LoginForm({
                   Don&apos;t have an account? <a href="/signup">Sign up</a>
                 </FieldDescription>
               </Field>
-              {state?.error && <p className="text-red-500">{state.error}</p>}
             </FieldGroup>
           </form>
         </CardContent>

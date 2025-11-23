@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [state, action] = useActionState(signUpAction, null);
@@ -26,6 +27,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   useEffect(() => {
     if (state?.success) {
       router.push("/");
+    }
+    if (state?.error) {
+      toast.error(state.error);
     }
   }, [state, router]);
 
@@ -94,7 +98,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 </FieldDescription>
               </Field>
             </FieldGroup>
-            {state?.error && <p className="text-red-500">{state.error}</p>}
           </FieldGroup>
         </form>
       </CardContent>

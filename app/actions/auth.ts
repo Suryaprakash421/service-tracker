@@ -10,8 +10,7 @@ export async function signInAction(prevState: any, formData: FormData) {
 
   try {
     const session = await auth.api.signInEmail({ body: { email, password } });
-    console.log("Signed in user session:", session);
-    return { success: true };
+    return { success: true, message: "Signed in successfully" };
   } catch (error: any) {
     // Return error message for display
     return { error: error.message || "Invalid credentials" };
@@ -28,7 +27,7 @@ export async function signUpAction(prevState: any, formData: FormData) {
     const user = await auth.api.signUpEmail({
       body: { email, password, name },
     });
-    return { success: true };
+    return { success: true, message: "Signed up successfully" };
   } catch (error: any) {
     return { error: error.message || "Sign-up failed" };
   }
