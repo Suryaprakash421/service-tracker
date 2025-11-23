@@ -5,7 +5,7 @@ import { asyncHandler } from "@/lib/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function signInAction(prevState: any, formData: FormData) {
+export async function signInAction(prevState: unknown, formData: FormData) {
   return asyncHandler(async () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
@@ -16,7 +16,7 @@ export async function signInAction(prevState: any, formData: FormData) {
   }, "Signed in successfully");
 }
 
-export async function signUpAction(prevState: any, formData: FormData) {
+export async function signUpAction(prevState: unknown, formData: FormData) {
   return asyncHandler(
     async () => {
       const email = formData.get("email") as string;

@@ -1,6 +1,4 @@
 import { clsx, type ClassValue } from "clsx";
-import { error } from "console";
-import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
@@ -8,17 +6,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function showLoadingToast(
-  promise: Promise<any>,
+export function showLoadingToast<T extends { message?: string }>(
+  promise: Promise<T>,
   redirectTo: () => void
 ) {
   toast.promise(promise, {
     loading: "Loading...",
-    success: (data) => {
+    success: (data: T) => {
       redirectTo();
       return data.message || "Success";
     },
-    error: (error) => error.message || "An error occurred",
+    error: (err: unknown) =>
+      (err as { message?: string })?.message || "An error occurred",
   });
 }
 
@@ -26,11 +25,16 @@ export type ActionResponse<T = any> = {
   status: "ok" | "created" | "not-found" | "error" | "unauthorized" | string;
   code: number;
   message: string;
-  success: boolean;
-  result?: T;
+  result?: T; // present only on success
 };
 
 // 2. Create the AsyncHandler wrapper
+interface AppError extends Error {
+  code?: number;
+  status?: number;
+  digest?: string;
+}
+
 export async function asyncHandler<T>(
   fn: () => Promise<T>,
   successMessage: string = "Success",
@@ -43,23 +47,28 @@ export async function asyncHandler<T>(
       status: successStatus,
       code: successCode,
       message: successMessage,
-      success: true,
       result,
     };
-  } catch (error: any) {
-    // Important: Re-throw Next.js redirects so navigation works
+  } catch (err: unknown) {
+    const error = err as AppError;
     if (
-      error.message === "NEXT_REDIRECT" ||
-      error.digest?.startsWith("NEXT_REDIRECT")
+      error?.message === "NEXT_REDIRECT" ||
+      error?.digest?.startsWith("NEXT_REDIRECT")
     ) {
       throw error;
     }
-
+    if (error?.name === "CastError") {
+      return {
+        status: "not-found",
+        code: 404,
+        message: "Resource not found",
+      };
+    }
+    const code = error?.code || error?.status || 500;
     return {
-      status: "error",
-      code: error.status || 500,
-      message: error.message || "An unexpected error occurred",
-      success: false,
+      status: code === 404 ? "not-found" : "error",
+      code,
+      message: error?.message || "Internal Server Error",
     };
   }
 }
