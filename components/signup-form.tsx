@@ -28,8 +28,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     if (state?.success) {
       router.push("/");
     }
-    if (state?.error) {
-      toast.error(state.error);
+    if (!state?.success) {
+      toast.error(state?.message);
     }
   }, [state, router]);
 
