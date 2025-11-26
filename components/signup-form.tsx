@@ -25,10 +25,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
 
   useEffect(() => {
-    if (state?.success) {
+    if (state?.result) {
       router.push("/");
     }
-    if (!state?.success) {
+    if (!state?.result) {
       toast.error(state?.message);
     }
   }, [state, router]);

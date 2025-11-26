@@ -44,7 +44,7 @@ export function LoginForm({
     // Wrap the action to throw an error if the server returns { error: ... }
     const loginPromise = async () => {
       const result = await signInAction(null, formData);
-      if (!result.success) {
+      if (!result.result) {
         throw new Error(result.message);
       }
       return result;
