@@ -20,6 +20,7 @@ import { signInAction } from "@/app/actions/auth";
 import { redirect, useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export function LoginForm({
   className,
@@ -95,7 +96,8 @@ export function LoginForm({
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/signup">Sign up</a>
+                  Don&apos;t have an account?{" "}
+                  <Link href="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

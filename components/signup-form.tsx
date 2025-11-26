@@ -16,6 +16,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
@@ -94,7 +95,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/login">Sign in</a>
+                  Already have an account? <Link href="/login">Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
