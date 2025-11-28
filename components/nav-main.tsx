@@ -48,10 +48,10 @@ export function NavMain({
                 className={item.url === pathName ? "bg-accent" : ""}
                 tooltip={item.title}
               >
-                <a href={item.url}>
+                <Link href={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

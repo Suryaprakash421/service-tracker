@@ -1,7 +1,11 @@
-import React from "react";
+import CreateJobForm from "@/components/create-job-form";
 
 const NewJob = () => {
-  return <div>NewJob</div>;
+  return (
+    <div>
+      <CreateJobForm />
+    </div>
+  );
 };
 
 export default NewJob;

@@ -32,12 +32,13 @@ export async function createCustomer(data: CreateCustomerInput) {
 }
 
 export async function listCustomers(
-  page: number = 1,
-  limit: number = 20,
+  page: number = 0,
+  limit: number = 0,
   search?: string
 ) {
   await dbConnect();
   const query: Record<string, unknown> = {};
+  const isPaginated = page > 0 && limit > 0;
   if (search) {
     query.$or = [
       { name: { $regex: search, $options: "i" } },
@@ -45,6 +46,13 @@ export async function listCustomers(
     ];
   }
   const skip = (page - 1) * limit;
+  if (!isPaginated) {
+    const [items, total] = await Promise.all([
+      Customer.find(query).sort({ createdAt: -1 }),
+      Customer.countDocuments(query),
+    ]);
+    return { items, total, page, pages: 1 };
+  }
   const [items, total] = await Promise.all([
     Customer.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
     Customer.countDocuments(query),
