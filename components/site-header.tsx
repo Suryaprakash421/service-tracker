@@ -17,7 +17,10 @@ export function SiteHeader() {
         setTitle("Dashboard");
         break;
       case "/job/new":
-        setTitle("Create Job");
+        setTitle("Job");
+        break;
+      case "/customer/new":
+        setTitle("Customer");
         break;
       default:
         setTitle("Dashboard");
@@ -33,16 +36,6 @@ export function SiteHeader() {
         />
         <h1 className="text-base font-medium">{title}</h1>
         <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="dark:text-foreground"
-            >
-              GitHub
-            </a>
-          </Button>
           <ThemeToggle />
         </div>
       </div>

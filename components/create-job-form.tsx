@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Button } from "./ui/button";
-import { getCustomers } from "@/app/actions/customer";
+import { getCustomerListAction } from "@/app/actions/customer";
 import { useQuery } from "@tanstack/react-query";
 import { Customer } from "@/lib/types/customer";
 
@@ -19,7 +19,7 @@ function CreateJobForm() {
   const { data: customers, isLoading } = useQuery({
     queryKey: ["customers"],
     queryFn: async () => {
-      const response = await getCustomers();
+      const response = await getCustomerListAction();
       return response.result.items as Customer[];
     },
   });

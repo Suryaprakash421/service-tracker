@@ -16,6 +16,7 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
+  IconUserPlus,
   IconUsers,
 } from "@tabler/icons-react";
 
@@ -32,6 +33,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Icon } from "lucide-react";
 
 const data = {
   user: {
@@ -46,24 +48,9 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "/lifecycle",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "/projects",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "/team",
-      icon: IconUsers,
+      title: "Create Customer",
+      url: "/customer/new",
+      icon: IconUserPlus,
     },
   ],
   navSecondary: [
