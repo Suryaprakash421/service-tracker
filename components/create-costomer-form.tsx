@@ -2,9 +2,17 @@
 
 import { createCustomerAction } from "@/app/actions/customer";
 import { Button } from "./ui/button";
-import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { showLoadingToast } from "@/lib/utils";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 const CreateCustomerForm = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -24,46 +32,54 @@ const CreateCustomerForm = () => {
     });
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <FieldGroup>
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="name">Name*</FieldLabel>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="John Doe"
-              required
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="phoneNumber">Phone Number*</FieldLabel>
-            <Input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="number"
-              placeholder="9943213540"
-              required
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="aadharNumber">Aadhar Number</FieldLabel>
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Create Customer</CardTitle>
+        <CardDescription>
+          Enter the details of the new customer.
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name *</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="John Doe"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phoneNumber">Phone Number *</Label>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                type="number"
+                placeholder="9943213540"
+                required
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="aadharNumber">Aadhar Number</Label>
             <Input
               id="aadharNumber"
               name="aadharNumber"
               type="number"
               placeholder="1234 5678 9012"
             />
-          </Field>
-        </FieldGroup>
-        <Field className="flex items-end">
-          <Button className="max-w-44 " type="submit">
-            Create
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button className="w-full md:w-auto mt-6" type="submit">
+            Create Customer
           </Button>
-        </Field>
-      </FieldGroup>
-    </form>
+        </CardFooter>
+      </form>
+    </Card>
   );
 };
 

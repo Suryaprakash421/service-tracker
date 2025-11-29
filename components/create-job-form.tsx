@@ -1,6 +1,5 @@
 "use client";
 
-import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import {
   Select,
   SelectContent,
@@ -22,6 +21,14 @@ import { createJobAction } from "@/app/actions/job";
 import { showLoadingToast } from "@/lib/utils";
 import { useState } from "react";
 import { Textarea } from "./ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 const statuses = ["Pending", "In Progress", "Success", "Settled"];
 const statusDropdownOptions = statuses.map((status) => ({
@@ -61,110 +68,151 @@ function CreateJobForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FieldGroup>
-        {/* Customer Field */}
-        <Field>
-          <FieldLabel htmlFor="customer">Customer</FieldLabel>
-          <div className="flex w-full gap-4 justify-end md:items-center md:flex-row flex-col">
-            <Select
-              name="customer"
-              disabled={isLoading}
-              value={customerValue}
-              onValueChange={setCustomerValue}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a customer" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Customers</SelectLabel>
-                  {customers?.map((customer) => (
-                    <SelectItem key={customer._id} value={customer._id}>
-                      {customer.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Button type="button" variant="default" asChild>
-              <Link href="/app/customer/new">+ Add New Customer</Link>
-            </Button>
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle>Create Job</CardTitle>
+        <CardDescription>
+          Enter the details for the new service job.
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-6">
+          {/* Customer Field */}
+          <div className="space-y-2">
+            <Label htmlFor="customer">Customer</Label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Select
+                name="customer"
+                disabled={isLoading}
+                value={customerValue}
+                onValueChange={setCustomerValue}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a customer" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Customers</SelectLabel>
+                    {customers?.map((customer) => (
+                      <SelectItem key={customer._id} value={customer._id}>
+                        {customer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button
+                type="button"
+                variant="outline"
+                asChild
+                className="shrink-0"
+              >
+                <Link href="/app/customer/new">+ Add New Customer</Link>
+              </Button>
+            </div>
           </div>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="deviceModel">Device Model</FieldLabel>
-          <Input
-            name="deviceModel"
-            type="text"
-            required
-            placeholder="Enter device model"
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="problem">Problem</FieldLabel>
-          <Input
-            name="problem"
-            type="text"
-            required
-            placeholder="Describe the problem"
-          />
-        </Field>
-        <FieldGroup className="bg-background/50 p-4 rounded-md border border-border">
-          <FieldLabel>Inventory</FieldLabel>
-          <FieldGroup className="flex flex-row">
-            <Field className="flex items-center flex-row gap-2">
-              <Checkbox className="max-w-4 h-4" name="hasSimCard" />
-              <Label htmlFor="hasSimCard">Has SIM Card</Label>
-            </Field>
-            <Field className="flex items-center flex-row gap-2">
-              <Checkbox className="max-w-4 h-4" name="hasMemCard" />
-              <Label htmlFor="hasMemCard">Has Memory Card</Label>
-            </Field>
-            <Field className="flex items-center flex-row gap-2">
-              <Checkbox
-                defaultChecked={true}
-                className="max-w-4 h-4"
-                name="hasBackCover"
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="deviceModel">Device Model</Label>
+              <Input
+                name="deviceModel"
+                type="text"
+                required
+                placeholder="Enter device model"
               />
-              <Label htmlFor="hasBackCover">Has Back Cover</Label>
-            </Field>
-          </FieldGroup>
-        </FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="status">Status</FieldLabel>
-          <Select name="status" defaultValue={statusDropdownOptions[0].value}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Status</SelectLabel>
-                {statusDropdownOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="additionalDetails">
-            Additional Details
-          </FieldLabel>
-          <Textarea
-            name="additionalDetails"
-            placeholder="Enter any additional details"
-          />
-        </Field>
-        <Field className="flex items-end">
-          <Button className="max-w-44" type="submit" variant={"default"}>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="problem">Problem</Label>
+              <Textarea
+                name="problem"
+                required
+                placeholder="Describe the problem"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Label>Inventory</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 border rounded-lg bg-muted/50">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="hasSimCard" name="hasSimCard" />
+                <Label
+                  htmlFor="hasSimCard"
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  Has SIM Card
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="hasMemCard" name="hasMemCard" />
+                <Label
+                  htmlFor="hasMemCard"
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  Has Memory Card
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="hasBackCover"
+                  defaultChecked={true}
+                  name="hasBackCover"
+                />
+                <Label
+                  htmlFor="hasBackCover"
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  Has Back Cover
+                </Label>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                name="status"
+                defaultValue={statusDropdownOptions[0].value}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Status</SelectLabel>
+                    {statusDropdownOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="additionalDetails">Additional Details</Label>
+            <Textarea
+              name="additionalDetails"
+              placeholder="Enter any additional details"
+              className="min-h-[100px]"
+            />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            className="w-full md:w-auto mt-6"
+            type="submit"
+            variant={"default"}
+          >
             Create Job
           </Button>
-        </Field>
-      </FieldGroup>
-    </form>
+        </CardFooter>
+      </form>
+    </Card>
   );
 }
 
