@@ -17,7 +17,7 @@ const ProtectedRootLayout = ({
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="floating" />
       <SidebarInset>
         <SiteHeader />
         <main className="px-4 md:px-6 py-4 md:py-6">{children}</main>

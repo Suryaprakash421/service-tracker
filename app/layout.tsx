@@ -7,6 +7,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import QueryProvider from "@/components/providers/query-provider";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader
+            initialPosition={0.7}
+            showSpinner={false}
+            crawl={false}
+            easing="ease"
+          />
           <QueryProvider>
             <main className="px-4 md:px-6 py-4 md:py-6">{children}</main>
           </QueryProvider>

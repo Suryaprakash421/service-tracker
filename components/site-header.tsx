@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 export function SiteHeader() {
   const path = usePathname();
-  const [title, setTitle] = useState("Dashboard");
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     switch (path) {
