@@ -33,6 +33,7 @@ export interface UpdateJobInput {
 
 export async function createJob(data: CreateJobInput) {
   await dbConnect();
+  console.log("Creating job with data:", data);
   // Ensure customer exists
   const customer = await Customer.findById(data.customer);
   if (!customer) {
