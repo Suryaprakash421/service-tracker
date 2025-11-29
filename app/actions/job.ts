@@ -1,6 +1,6 @@
 "use server";
 
-import { createJob, CreateJobInput } from "@/lib/services/jobService";
+import { createJob, CreateJobInput, listJobs } from "@/lib/services/jobService";
 import { asyncHandler } from "@/lib/utils";
 
 export async function createJobAction(prevState: unknown, formData: FormData) {
@@ -30,4 +30,15 @@ export async function createJobAction(prevState: unknown, formData: FormData) {
     const job = await createJob(data);
     return JSON.parse(JSON.stringify(job));
   }, "Job added successfully");
+}
+
+export async function getJobAction(
+  page: number = 1,
+  limit: number = 20,
+  status?: string
+) {
+  return asyncHandler(async () => {
+    const jobs = await listJobs(page, limit, status);
+    return JSON.parse(JSON.stringify(jobs));
+  }, "Failed to fetch jobs");
 }

@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   IconCamera,
+  IconCash,
   IconChartBar,
   IconDashboard,
   IconDatabase,
@@ -13,6 +14,7 @@ import {
   IconHelp,
   IconInnerShadowTop,
   IconListDetails,
+  IconLuggage,
   IconReport,
   IconSearch,
   IconSettings,
@@ -51,6 +53,11 @@ const data = {
       title: "Create Customer",
       url: "/app/customer/new",
       icon: IconUserPlus,
+    },
+    {
+      title: "Job",
+      url: "/app/job",
+      icon: IconCash,
     },
   ],
   navSecondary: [
