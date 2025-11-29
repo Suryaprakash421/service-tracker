@@ -11,10 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const result = await asyncHandler(
-    () => getCustomer(id),
-    "Customer fetched"
-  );
+  const result = await asyncHandler(() => getCustomer(id), "Customer fetched");
   return NextResponse.json(result, { status: result.code });
 }
 

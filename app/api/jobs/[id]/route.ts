@@ -17,10 +17,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await req.json();
-  const result = await asyncHandler(
-    () => updateJob(id, body),
-    "Job updated"
-  );
+  const result = await asyncHandler(() => updateJob(id, body), "Job updated");
   return NextResponse.json(result, { status: result.code });
 }
 
