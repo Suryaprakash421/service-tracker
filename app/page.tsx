@@ -8,8 +8,8 @@ export default async function Home() {
   });
 
   if (!session) {
-    return redirect("/login");
+    return redirect("/auth/login");
   }
 
-  return redirect("/dashboard");
+  return redirect("/app/dashboard");
 }

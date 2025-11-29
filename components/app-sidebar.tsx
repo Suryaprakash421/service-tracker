@@ -44,29 +44,29 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/app/dashboard",
       icon: IconDashboard,
     },
     {
       title: "Create Customer",
-      url: "/customer/new",
+      url: "/app/customer/new",
       icon: IconUserPlus,
     },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "/settings",
+      url: "/app/settings",
       icon: IconSettings,
     },
     {
       title: "Get Help",
-      url: "/help",
+      url: "/app/help",
       icon: IconHelp,
     },
     {
       title: "Search",
-      url: "/search",
+      url: "/app/search",
       icon: IconSearch,
     },
   ],

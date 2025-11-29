@@ -8,10 +8,11 @@ import {
 
 export async function GET(
   _: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const result = await asyncHandler(
-    () => getCustomer(params.id),
+    () => getCustomer(id),
     "Customer fetched"
   );
   return NextResponse.json(result, { status: result.code });
@@ -19,11 +20,12 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await req.json();
   const result = await asyncHandler(
-    () => updateCustomer(params.id, body),
+    () => updateCustomer(id, body),
     "Customer updated"
   );
   return NextResponse.json(result, { status: result.code });
@@ -31,10 +33,11 @@ export async function PATCH(
 
 export async function DELETE(
   _: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const result = await asyncHandler(
-    () => deleteCustomer(params.id),
+    () => deleteCustomer(id),
     "Customer deleted"
   );
   return NextResponse.json(result, { status: result.code });

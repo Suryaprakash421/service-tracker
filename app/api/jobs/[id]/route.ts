@@ -4,19 +4,21 @@ import { getJob, updateJob, deleteJob } from "@/lib/services/jobService";
 
 export async function GET(
   _: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const result = await asyncHandler(() => getJob(params.id), "Job fetched");
+  const { id } = await params;
+  const result = await asyncHandler(() => getJob(id), "Job fetched");
   return NextResponse.json(result, { status: result.code });
 }
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await req.json();
   const result = await asyncHandler(
-    () => updateJob(params.id, body),
+    () => updateJob(id, body),
     "Job updated"
   );
   return NextResponse.json(result, { status: result.code });
@@ -24,8 +26,9 @@ export async function PATCH(
 
 export async function DELETE(
   _: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const result = await asyncHandler(() => deleteJob(params.id), "Job deleted");
+  const { id } = await params;
+  const result = await asyncHandler(() => deleteJob(id), "Job deleted");
   return NextResponse.json(result, { status: result.code });
 }

@@ -52,7 +52,7 @@ export function LoginForm({
     };
 
     showLoadingToast(loginPromise(), () => {
-      router.push("/dashboard");
+      router.push("/app/dashboard");
     });
   }
 

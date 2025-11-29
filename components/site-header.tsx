@@ -13,13 +13,13 @@ export function SiteHeader() {
 
   useEffect(() => {
     switch (path) {
-      case "/dashboard":
+      case "/app/dashboard":
         setTitle("Dashboard");
         break;
-      case "/job/new":
+      case "/app/job/new":
         setTitle("Job");
         break;
-      case "/customer/new":
+      case "/app/customer/new":
         setTitle("Customer");
         break;
       default:
