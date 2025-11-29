@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { getCustomerListAction } from "@/app/actions/customer";
 import { useQuery } from "@tanstack/react-query";
 import { Customer } from "@/lib/types/customer";
+import Link from "next/link";
 
 function CreateJobForm() {
   const { data: customers, isLoading } = useQuery({
@@ -50,8 +51,9 @@ function CreateJobForm() {
               type="button"
               variant="default"
               className="text-sm text-blue-600"
+              asChild
             >
-              + Add New Customer
+              <Link href="/app/customer/new">+ Add New Customer</Link>
             </Button>
           </div>
         </Field>
