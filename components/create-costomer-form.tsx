@@ -1,6 +1,10 @@
 "use client";
 
-import { createCustomerAction } from "@/app/actions/customer";
+import {
+  createCustomerAction,
+  getCustomerByIdAction,
+  updateCustomerAction,
+} from "@/app/actions/customer";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -13,33 +17,76 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Customer } from "@/lib/types/customer";
 
 const CreateCustomerForm = () => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [initialValues, setInitialValues] = React.useState<Customer>();
   const router = useRouter();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      setIsEditing(true);
+    }
+  }, [id]);
+
+  const hasEditMode = isEditing && !!id;
+
+  const { data } = useQuery({
+    queryKey: ["customer", id],
+    queryFn: () => getCustomerByIdAction(id as string),
+    enabled: hasEditMode,
+  });
+
+  useEffect(() => {
+    if (data && data.result) {
+      setInitialValues(data.result);
+    }
+  }, [data]);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    const promiseCreateCustomer = async () => {
-      const result = await createCustomerAction(null, formData);
-      if (!result.result) {
-        throw new Error(result.message);
-      }
-      return result;
-    };
-    showLoadingToast(promiseCreateCustomer(), () => {
+    let promise;
+    if (hasEditMode) {
+      promise = async () => {
+        const result = await updateCustomerAction(id as string, formData);
+        if (!result.result) {
+          throw new Error(result.message);
+        }
+        return result;
+      };
+    } else {
+      promise = async () => {
+        const result = await createCustomerAction(null, formData);
+        if (!result.result) {
+          throw new Error(result.message);
+        }
+        return result;
+      };
+    }
+    showLoadingToast(promise(), () => {
       form.reset();
       router.push("/app/customer");
     });
   };
+
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Create Customer</CardTitle>
+        <CardTitle>
+          {hasEditMode ? "Edit Customer" : "Create Customer"}
+        </CardTitle>
         <CardDescription>
-          Enter the details of the new customer.
+          {hasEditMode
+            ? "Edit the details of the customer."
+            : "Enter the details of the new customer."}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -52,6 +99,7 @@ const CreateCustomerForm = () => {
                 name="name"
                 type="text"
                 placeholder="John Doe"
+                defaultValue={initialValues?.name}
                 required
               />
             </div>
@@ -62,6 +110,7 @@ const CreateCustomerForm = () => {
                 name="phoneNumber"
                 type="number"
                 placeholder="9943213540"
+                defaultValue={initialValues?.phoneNumber}
                 required
               />
             </div>
@@ -72,13 +121,14 @@ const CreateCustomerForm = () => {
               id="aadharNumber"
               name="aadharNumber"
               type="number"
+              defaultValue={initialValues?.aadharNumber}
               placeholder="1234 5678 9012"
             />
           </div>
         </CardContent>
         <CardFooter>
           <Button className="w-full md:w-auto mt-6" type="submit">
-            Create Customer
+            {hasEditMode ? "Update Customer" : "Create Customer"}
           </Button>
         </CardFooter>
       </form>

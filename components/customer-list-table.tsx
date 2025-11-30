@@ -8,6 +8,7 @@ import {
   flexRender,
   getCoreRowModel,
   PaginationState,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
@@ -47,6 +48,7 @@ import Link from "next/link";
 import { hideAadharNumber } from "@/lib/utils";
 import Search from "./ui/search";
 import { useDebounce } from "@/hooks/use-debounce";
+import { redirect, useRouter } from "next/navigation";
 
 function CustomerListTable() {
   const [{ pageIndex, pageSize }, setPagination] =
@@ -56,6 +58,7 @@ function CustomerListTable() {
     });
   const [search, setSearch] = React.useState<string>("");
   const debouncedSearch = useDebounce(search, 300);
+  const router = useRouter();
 
   const pagination = React.useMemo(
     () => ({
@@ -90,14 +93,17 @@ function CustomerListTable() {
       {
         id: "actions",
         cell: ({ row }) => {
-          return <ActionDropdown />;
+          return <ActionDropdown row={row} />;
         },
       },
     ],
     []
   );
 
-  function ActionDropdown() {
+  function ActionDropdown({ row }: { row: Row<Customer> }) {
+    const handleJobEdit = () => {
+      router.push(`/app/customer/${row.original._id}`);
+    };
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -111,7 +117,7 @@ function CustomerListTable() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleJobEdit}>Edit</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
