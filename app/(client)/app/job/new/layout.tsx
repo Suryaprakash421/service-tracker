@@ -7,8 +7,7 @@ const JobLayout = ({
 }>) => {
   return (
     <div className="">
-      <h1>Create New Job</h1>
-      <main className="mt-4">{children}</main>
+      <main className="mt-4 max-w-4xl mx-auto">{children}</main>
     </div>
   );
 };

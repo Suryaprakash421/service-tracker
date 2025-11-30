@@ -17,10 +17,10 @@ export function SiteHeader() {
         setTitle("Dashboard");
         break;
       case checkPath("/app/job"):
-        setTitle("Job");
+        setTitle("Jobs");
         break;
       case checkPath("/app/customer"):
-        setTitle("Customer");
+        setTitle("Customers");
         break;
       default:
         setTitle("Dashboard");

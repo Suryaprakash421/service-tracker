@@ -33,10 +33,12 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
+  IconCirclePlusFilled,
   IconDotsVertical,
   IconEdit,
   IconHttpDelete,
   IconLoader,
+  IconPlus,
 } from "@tabler/icons-react";
 import {
   DropdownMenu,
@@ -47,6 +49,7 @@ import {
 } from "./ui/dropdown-menu";
 import { getColorForStatus, STATUS_DROPDOWN_OPTIONS } from "@/lib/constant";
 import { showLoadingToast } from "@/lib/utils";
+import Link from "next/link";
 
 // Define the shape of our data
 interface Job {
@@ -210,6 +213,12 @@ const JobListTable = () => {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button variant={"outline"}>
+          <IconCirclePlusFilled />
+          <Link href="/app/job/new">Create Job</Link>
+        </Button>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader className="bg-muted sticky top-0 z-10">

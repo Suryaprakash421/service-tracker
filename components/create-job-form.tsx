@@ -30,9 +30,11 @@ import {
   CardTitle,
 } from "./ui/card";
 import { STATUS_DROPDOWN_OPTIONS } from "@/lib/constant";
+import { useRouter } from "next/navigation";
 
 function CreateJobForm() {
   const [customerValue, setCustomerValue] = useState<string>("");
+  const router = useRouter();
 
   const { data: customers, isLoading } = useQuery({
     queryKey: ["customers"],
@@ -59,11 +61,12 @@ function CreateJobForm() {
     showLoadingToast(loginPromise(), () => {
       setCustomerValue("");
       form.reset();
+      router.push("/app/job");
     });
   }
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Create Job</CardTitle>
         <CardDescription>
