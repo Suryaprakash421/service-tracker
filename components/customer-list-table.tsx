@@ -45,6 +45,8 @@ import {
 } from "./ui/select";
 import Link from "next/link";
 import { hideAadharNumber } from "@/lib/utils";
+import Search from "./ui/search";
+import { useDebounce } from "@/hooks/use-debounce";
 
 function CustomerListTable() {
   const [{ pageIndex, pageSize }, setPagination] =
@@ -52,6 +54,8 @@ function CustomerListTable() {
       pageIndex: 0,
       pageSize: 10,
     });
+  const [search, setSearch] = React.useState<string>("");
+  const debouncedSearch = useDebounce(search, 300);
 
   const pagination = React.useMemo(
     () => ({
@@ -116,8 +120,9 @@ function CustomerListTable() {
   }
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["customers", pageIndex, pageSize],
-    queryFn: () => getCustomerListAction(pageIndex + 1, pageSize),
+    queryKey: ["customers", pageIndex, pageSize, debouncedSearch],
+    queryFn: () =>
+      getCustomerListAction(pageIndex + 1, pageSize, debouncedSearch),
   });
 
   const table = useReactTable({
@@ -133,7 +138,12 @@ function CustomerListTable() {
   });
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center gap-4">
+        <Search
+          className="max-w-sm"
+          placeholder="Search customers..."
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <Link href="/app/customer/new">
           <Button variant={"outline"} className="hidden md:flex">
             <IconCirclePlusFilled />

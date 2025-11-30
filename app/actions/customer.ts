@@ -9,6 +9,7 @@ export async function getCustomerListAction(
   search?: string
 ) {
   return asyncHandler(async () => {
+    console.log("Fetching customers with search:", search);
     const data = await listCustomers(page, limit, search);
     return JSON.parse(JSON.stringify(data));
   }, "Customers fetched");
