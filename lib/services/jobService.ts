@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/db";
-import Job from "@/lib/model/Job";
-import Customer from "@/lib/model/Customer";
+import Job from "@/lib/model/Job.model";
+import Customer from "@/lib/model/Customer.model";
 
 interface AppError extends Error {
   code?: number;
@@ -15,6 +15,8 @@ export interface CreateJobInput {
     hasMemoryCard?: boolean;
     hasBackCover?: boolean;
   };
+  estimatedPrice?: number;
+  paidAmount?: number;
   additionalDetails?: string;
   status?: string; // enum validated by schema
 }
@@ -27,13 +29,14 @@ export interface UpdateJobInput {
     hasMemoryCard?: boolean;
     hasBackCover?: boolean;
   };
+  estimatedPrice?: number;
+  paidAmount?: number;
   additionalDetails?: string;
   status?: string;
 }
 
 export async function createJob(data: CreateJobInput) {
   await dbConnect();
-  console.log("Creating job with data:", data);
   // Ensure customer exists
   const customer = await Customer.findById(data.customer);
   if (!customer) {

@@ -30,6 +30,14 @@ const jobSchema = new mongoose.Schema(
       enum: ["Pending", "In Progress", "Success", "Settled"],
       default: "Pending",
     },
+    estimatedPrice: {
+      type: Number,
+      default: 0,
+    },
+    paidAmount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

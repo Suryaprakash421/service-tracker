@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/db";
-import Customer from "@/lib/model/Customer";
+import Customer from "@/lib/model/Customer.model";
 
 interface AppError extends Error {
   code?: number;

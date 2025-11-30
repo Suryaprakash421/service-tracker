@@ -176,6 +176,14 @@ const JobListTable = () => {
         header: "Problem",
       },
       {
+        accessorKey: "estimatedPrice",
+        header: "Estimated Price",
+      },
+      {
+        accessorKey: "paidAmount",
+        header: "Paid Amount",
+      },
+      {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => <StatusDropdown row={row} callBack={refetch} />,
@@ -259,10 +267,12 @@ const JobListTable = () => {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {cell.column.columnDef.cell
+                        ? flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )
+                        : 0}
                     </TableCell>
                   ))}
                 </TableRow>

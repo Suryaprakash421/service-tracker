@@ -16,6 +16,8 @@ export async function createJobAction(prevState: unknown, formData: FormData) {
     const hasSimCard = formData.get("hasSimCard") === "on";
     const hasMemCard = formData.get("hasMemCard") === "on";
     const hasBackCover = formData.get("hasBackCover") === "on";
+    const estimatedPrice = formData.get("estimatedPrice");
+    const paidAmount = formData.get("paidAmount");
     const additionalDetails = formData.get("additionalDetails");
     const status = formData.get("status");
 
@@ -28,6 +30,8 @@ export async function createJobAction(prevState: unknown, formData: FormData) {
         hasMemCard: hasMemCard,
         hasBackCover: hasBackCover,
       },
+      estimatedPrice: Number(estimatedPrice),
+      paidAmount: Number(paidAmount),
       additionalDetails: additionalDetails,
       status: status,
     } as CreateJobInput;
