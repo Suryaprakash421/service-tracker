@@ -21,10 +21,14 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Customer } from "@/lib/types/customer";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { createCustomerFormSchema } from "@/lib/form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 
 const CreateCustomerForm = () => {
   const [isEditing, setIsEditing] = React.useState(false);
-  const [initialValues, setInitialValues] = React.useState<Customer>();
   const router = useRouter();
   const { id } = useParams();
 
@@ -44,19 +48,19 @@ const CreateCustomerForm = () => {
 
   useEffect(() => {
     if (data && data.result) {
-      setInitialValues(data.result);
+      form.reset({
+        name: data.result.name,
+        phoneNumber: data.result.phoneNumber,
+        aadharNumber: data.result.aadharNumber || "",
+      });
     }
   }, [data]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
+  const onSubmit = (values: z.infer<typeof createCustomerFormSchema>) => {
     let promise;
     if (hasEditMode) {
       promise = async () => {
-        const result = await updateCustomerAction(id as string, formData);
+        const result = await updateCustomerAction(id as string, values);
         if (!result.result) {
           throw new Error(result.message);
         }
@@ -64,7 +68,7 @@ const CreateCustomerForm = () => {
       };
     } else {
       promise = async () => {
-        const result = await createCustomerAction(null, formData);
+        const result = await createCustomerAction(values);
         if (!result.result) {
           throw new Error(result.message);
         }
@@ -76,6 +80,15 @@ const CreateCustomerForm = () => {
       router.push("/app/customer");
     });
   };
+
+  const form = useForm<z.infer<typeof createCustomerFormSchema>>({
+    resolver: zodResolver(createCustomerFormSchema),
+    defaultValues: {
+      name: "",
+      phoneNumber: "",
+      aadharNumber: "",
+    },
+  });
 
   return (
     <Card className="w-full">
@@ -89,49 +102,75 @@ const CreateCustomerForm = () => {
             : "Enter the details of the new customer."}
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+              <FormField
                 name="name"
-                type="text"
-                placeholder="John Doe"
-                defaultValue={initialValues?.name}
-                required
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="name">Name *</Label>
+                    <FormControl>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number *</Label>
-              <Input
-                id="phoneNumber"
+              <FormField
                 name="phoneNumber"
-                type="number"
-                placeholder="9943213540"
-                defaultValue={initialValues?.phoneNumber}
-                required
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="phoneNumber">Phone Number *</Label>
+                    <FormControl>
+                      <Input
+                        id="phoneNumber"
+                        type="number"
+                        placeholder="9943213540"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="aadharNumber">Aadhar Number</Label>
-            <Input
-              id="aadharNumber"
+            <FormField
               name="aadharNumber"
-              type="number"
-              defaultValue={initialValues?.aadharNumber}
-              placeholder="1234 5678 9012"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <Label htmlFor="aadharNumber">Aadhar Number</Label>
+                  <FormControl>
+                    <Input
+                      id="aadharNumber"
+                      type="number"
+                      placeholder="1234 5678 9012"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
             />
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button className="w-full md:w-auto mt-6" type="submit">
-            {hasEditMode ? "Update Customer" : "Create Customer"}
-          </Button>
-        </CardFooter>
-      </form>
+          </CardContent>
+          <CardFooter>
+            <Button className="w-full md:w-auto mt-6" type="submit">
+              {hasEditMode ? "Update Customer" : "Create Customer"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 };

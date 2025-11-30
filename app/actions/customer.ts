@@ -7,6 +7,7 @@ import {
   listCustomers,
   updateCustomer,
 } from "@/lib/services/customerService";
+import { Customer } from "@/lib/types/customer";
 
 export async function getCustomerListAction(
   page: number = 0,
@@ -26,35 +27,35 @@ export async function getCustomerByIdAction(id: string) {
   }, "Customer fetched");
 }
 
-export async function createCustomerAction(
-  prevState: unknown,
-  formData: FormData
-) {
-  const name = formData.get("name") as string;
-  const phoneNumber = formData.get("phoneNumber") as string;
-  const aadharNumber = formData.get("aadharNumber") as string;
-
+export async function createCustomerAction(values: {
+  name: string;
+  phoneNumber: string;
+  aadharNumber?: string;
+}) {
   return asyncHandler(async () => {
     const data = await createCustomer({
-      name,
-      phoneNumber,
-      aadharNumber: aadharNumber || undefined,
+      name: values.name,
+      phoneNumber: values.phoneNumber,
+      aadharNumber: values.aadharNumber || undefined,
     });
     return JSON.parse(JSON.stringify(data));
   }, "Customer created");
 }
 
-export async function updateCustomerAction(id: string, formData: FormData) {
-  const name = formData.get("name") as string;
-  const phoneNumber = formData.get("phoneNumber") as string;
-  const aadharNumber = formData.get("aadharNumber") as string;
-
+export async function updateCustomerAction(
+  id: string,
+  values: {
+    name: string;
+    phoneNumber: string;
+    aadharNumber?: string;
+  }
+) {
   return asyncHandler(async () => {
     // Update customer logic to be implemented
     const data = await updateCustomer(id, {
-      name,
-      phoneNumber,
-      aadharNumber: aadharNumber || undefined,
+      name: values.name,
+      phoneNumber: values.phoneNumber,
+      aadharNumber: values.aadharNumber || undefined,
     });
     return JSON.parse(JSON.stringify(data));
   }, "Customer updated");

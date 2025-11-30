@@ -4,8 +4,10 @@ export const createCustomerFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phoneNumber: z
     .string()
-    .min(10, "Phone number must be at least 10 digits")
-    .max(15, "Phone number must be at most 15 digits"),
+    .refine(
+      (val) => !val || (val.length === 10 && /^\d+$/.test(val)),
+      "Phone number must be exactly 10 digits"
+    ),
   aadharNumber: z
     .string()
     .optional()
