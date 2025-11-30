@@ -13,8 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { useRouter } from "next/navigation";
 
 const CreateCustomerForm = () => {
+  const router = useRouter();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -29,6 +31,7 @@ const CreateCustomerForm = () => {
     };
     showLoadingToast(promiseCreateCustomer(), () => {
       form.reset();
+      router.push("/app/customer");
     });
   };
   return (

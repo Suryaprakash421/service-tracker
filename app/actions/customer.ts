@@ -3,9 +3,13 @@
 import { asyncHandler } from "@/lib/utils";
 import { createCustomer, listCustomers } from "@/lib/services/customerService";
 
-export async function getCustomerListAction() {
+export async function getCustomerListAction(
+  page: number = 0,
+  limit: number = 0,
+  search?: string
+) {
   return asyncHandler(async () => {
-    const data = await listCustomers();
+    const data = await listCustomers(page, limit, search);
     return JSON.parse(JSON.stringify(data));
   }, "Customers fetched");
 }

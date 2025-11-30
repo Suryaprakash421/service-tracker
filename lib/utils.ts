@@ -72,3 +72,10 @@ export async function asyncHandler<T>(
     };
   }
 }
+
+export function hideAadharNumber(aadharNumber: string): string {
+  if (aadharNumber.length >= 12) {
+    return "XXXX-XXXX-" + aadharNumber.slice(8);
+  }
+  return aadharNumber;
+}

@@ -50,9 +50,9 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Create Customer",
-      url: "/app/customer/new",
-      icon: IconUserPlus,
+      title: "Customers",
+      url: "/app/customer",
+      icon: IconUsers,
     },
     {
       title: "Job",
