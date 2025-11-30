@@ -29,12 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-
-const statuses = ["Pending", "In Progress", "Success", "Settled"];
-const statusDropdownOptions = statuses.map((status) => ({
-  label: status,
-  value: status,
-}));
+import { STATUS_DROPDOWN_OPTIONS } from "@/lib/constant";
 
 function CreateJobForm() {
   const [customerValue, setCustomerValue] = useState<string>("");
@@ -174,7 +169,7 @@ function CreateJobForm() {
               <Label htmlFor="status">Status</Label>
               <Select
                 name="status"
-                defaultValue={statusDropdownOptions[0].value}
+                defaultValue={STATUS_DROPDOWN_OPTIONS[0].value}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select status" />
@@ -182,7 +177,7 @@ function CreateJobForm() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Status</SelectLabel>
-                    {statusDropdownOptions.map((option) => (
+                    {STATUS_DROPDOWN_OPTIONS.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>

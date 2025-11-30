@@ -99,3 +99,18 @@ export async function deleteJob(id: string) {
   }
   return { id };
 }
+
+export async function updateJobStatus(id: string, status: string) {
+  await dbConnect();
+  const doc = await Job.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true }
+  ).populate("customer");
+  if (!doc) {
+    const err: AppError = new Error("Job not found");
+    err.code = 404;
+    throw err;
+  }
+  return doc;
+}

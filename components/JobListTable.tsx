@@ -7,9 +7,10 @@ import {
   getCoreRowModel,
   useReactTable,
   PaginationState,
+  Row,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { getJobAction } from "@/app/actions/job";
+import { getJobAction, updateJobStatusAction } from "@/app/actions/job";
 import {
   Table,
   TableBody,
@@ -32,8 +33,20 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
+  IconDotsVertical,
+  IconEdit,
+  IconHttpDelete,
   IconLoader,
 } from "@tabler/icons-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { getColorForStatus, STATUS_DROPDOWN_OPTIONS } from "@/lib/constant";
+import { showLoadingToast } from "@/lib/utils";
 
 // Define the shape of our data
 interface Job {
@@ -48,40 +61,74 @@ interface Job {
   createdAt: string;
 }
 
-const columns: ColumnDef<Job>[] = [
-  {
-    accessorKey: "customer.name",
-    header: "Customer",
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <span className="font-medium">{row.original.customer?.name}</span>
-        <span className="text-xs text-muted-foreground">
-          {row.original.customer?.phoneNumber}
-        </span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "deviceModel",
-    header: "Device",
-  },
-  {
-    accessorKey: "problem",
-    header: "Problem",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <Badge variant="outline">{row.original.status}</Badge>,
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Date",
-    cell: ({ row }) => {
-      return new Date(row.original.createdAt).toLocaleDateString();
-    },
-  },
-];
+function ActionDropdown() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+          size="icon"
+        >
+          <IconDotsVertical />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function StatusDropdown({
+  row,
+  callBack,
+}: {
+  row: Row<Job>;
+  callBack: () => void;
+}) {
+  const handleChangeStatus = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const status = e.currentTarget.textContent;
+    if (status === row.original.status) return;
+
+    const updateStatus = async () => {
+      const res = await updateJobStatusAction(row.original._id, status);
+      if (!res.result) {
+        throw new Error("Failed to update status");
+      }
+      return res;
+    };
+
+    showLoadingToast(updateStatus(), () => {
+      callBack();
+    });
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Badge
+          variant="outline"
+          className={getColorForStatus(row.original.status)}
+        >
+          {row.original.status}
+        </Badge>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-auto">
+        {STATUS_DROPDOWN_OPTIONS.map((option) => (
+          <DropdownMenuItem key={option.value} onClick={handleChangeStatus}>
+            {option.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 const JobListTable = () => {
   const [{ pageIndex, pageSize }, setPagination] =
@@ -89,6 +136,11 @@ const JobListTable = () => {
       pageIndex: 0,
       pageSize: 10,
     });
+
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["jobs", pageIndex, pageSize],
+    queryFn: () => getJobAction(pageIndex + 1, pageSize),
+  });
 
   const pagination = React.useMemo(
     () => ({
@@ -98,10 +150,47 @@ const JobListTable = () => {
     [pageIndex, pageSize]
   );
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["jobs", pageIndex, pageSize],
-    queryFn: () => getJobAction(pageIndex + 1, pageSize),
-  });
+  const columns: ColumnDef<Job>[] = React.useMemo(
+    () => [
+      {
+        accessorKey: "customer.name",
+        header: "Customer",
+        cell: ({ row }) => (
+          <div className="flex flex-col">
+            <span className="font-medium">{row.original.customer?.name}</span>
+            <span className="text-xs text-muted-foreground">
+              {row.original.customer?.phoneNumber}
+            </span>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "deviceModel",
+        header: "Device",
+      },
+      {
+        accessorKey: "problem",
+        header: "Problem",
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => <StatusDropdown row={row} callBack={refetch} />,
+      },
+      {
+        accessorKey: "createdAt",
+        header: "Date",
+        cell: ({ row }) => {
+          return new Date(row.original.createdAt).toLocaleDateString();
+        },
+      },
+      {
+        id: "actions",
+        cell: () => <ActionDropdown />,
+      },
+    ],
+    []
+  );
 
   const defaultData = React.useMemo(() => [], []);
 
@@ -123,7 +212,7 @@ const JobListTable = () => {
     <div className="space-y-4">
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
