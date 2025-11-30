@@ -134,10 +134,13 @@ function CustomerListTable() {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button variant={"outline"}>
-          <IconCirclePlusFilled />
-          <Link href="/app/customer/new">Create Customer</Link>
-        </Button>
+        <Link href="/app/customer/new">
+          <Button variant={"outline"} className="hidden md:flex">
+            <IconCirclePlusFilled />
+            Create Customer
+          </Button>
+          <IconCirclePlusFilled className="flex md:hidden" />
+        </Link>
       </div>
       <div className="rounded-md border">
         <Table>

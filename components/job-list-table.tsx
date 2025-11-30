@@ -50,6 +50,8 @@ import {
 import { getColorForStatus, STATUS_DROPDOWN_OPTIONS } from "@/lib/constant";
 import { showLoadingToast } from "@/lib/utils";
 import Link from "next/link";
+import Search from "./ui/search";
+import { useDebounce } from "@/hooks/use-debounce";
 
 // Define the shape of our data
 interface Job {
@@ -140,9 +142,12 @@ const JobListTable = () => {
       pageSize: 10,
     });
 
+  const [search, setSearch] = React.useState<string>("");
+  const debouncedSearch = useDebounce(search, 300);
+
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["jobs", pageIndex, pageSize],
-    queryFn: () => getJobAction(pageIndex + 1, pageSize),
+    queryKey: ["jobs", pageIndex, pageSize, debouncedSearch],
+    queryFn: () => getJobAction(pageIndex + 1, pageSize, debouncedSearch),
   });
 
   const pagination = React.useMemo(
@@ -221,11 +226,19 @@ const JobListTable = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button variant={"outline"}>
-          <IconCirclePlusFilled />
-          <Link href="/app/job/new">Create Job</Link>
-        </Button>
+      <div className="flex justify-between items-center gap-4">
+        <Search
+          className="max-w-sm"
+          placeholder="Search jobs..."
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Link href="/app/job/new">
+          <Button variant={"outline"} className="hidden md:flex">
+            <IconCirclePlusFilled />
+            Create Job
+          </Button>
+          <IconCirclePlusFilled className="flex md:hidden" />
+        </Link>
       </div>
       <div className="rounded-md border">
         <Table>

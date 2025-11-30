@@ -44,10 +44,11 @@ export async function createJobAction(prevState: unknown, formData: FormData) {
 export async function getJobAction(
   page: number = 1,
   limit: number = 20,
-  status?: string
+  search?: string
 ) {
   return asyncHandler(async () => {
-    const jobs = await listJobs(page, limit, status);
+    console.log("Fetching jobs with search:", search);
+    const jobs = await listJobs(page, limit, search);
     return JSON.parse(JSON.stringify(jobs));
   }, "Jobs fetched successfully");
 }

@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/db";
 import Job from "@/lib/model/Job.model";
 import Customer from "@/lib/model/Customer.model";
+import { PipelineStage } from "mongoose";
 
 interface AppError extends Error {
   code?: number;
@@ -51,21 +52,61 @@ export async function createJob(data: CreateJobInput) {
 export async function listJobs(
   page: number = 1,
   limit: number = 20,
+  search?: string,
   status?: string
 ) {
   await dbConnect();
   const query: Record<string, unknown> = {};
   if (status) query.status = status;
+  if (search) {
+    query.$or = [
+      { deviceModel: { $regex: search, $options: "i" } },
+      { problem: { $regex: search, $options: "i" } },
+      { additionalDetails: { $regex: search, $options: "i" } },
+      { "customer.name": { $regex: search, $options: "i" } },
+      { "customer.phoneNumber": { $regex: search, $options: "i" } },
+    ];
+  }
   const skip = (page - 1) * limit;
-  const [items, total] = await Promise.all([
-    Job.find(query)
-      .populate("customer")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit),
-    Job.countDocuments(query),
+
+  const itemPipeline: PipelineStage[] = [
+    {
+      $lookup: {
+        from: "customers",
+        localField: "customer",
+        foreignField: "_id",
+        as: "customer",
+      },
+    },
+    { $unwind: "$customer" },
+    { $match: query },
+    { $sort: { createdAt: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+  ];
+
+  const totalPipeline: PipelineStage[] = [
+    {
+      $lookup: {
+        from: "customers",
+        localField: "customer",
+        foreignField: "_id",
+        as: "customer",
+      },
+    },
+    { $unwind: "$customer" },
+    { $match: query },
+    { $count: "total" },
+  ];
+
+  const [itemsResult, totalResult] = await Promise.all([
+    Job.aggregate(itemPipeline),
+    Job.aggregate(totalPipeline),
   ]);
-  return { items, total, page, pages: Math.ceil(total / limit) };
+
+  const total = totalResult[0] ? totalResult[0].total : 0;
+
+  return { items: itemsResult, total, page, pages: Math.ceil(total / limit) };
 }
 
 export async function getJob(id: string) {

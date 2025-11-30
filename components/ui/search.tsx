@@ -1,0 +1,29 @@
+import React from "react";
+import { Input } from "./input";
+import { IconSearch } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+
+function Search({ className, ...props }: React.ComponentProps<"input">) {
+  return (
+    <div
+      className={cn(
+        "flex items-center dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none md:text-sm",
+        "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
+        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+        "has-disabled:cursor-not-allowed has-disabled:opacity-50",
+        className
+      )}
+    >
+      <IconSearch />
+      <input
+        data-slot="input"
+        className={cn(
+          "w-full h-full ml-2 focus:outline-none file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground"
+        )}
+        {...props}
+      />
+    </div>
+  );
+}
+
+export default Search;
