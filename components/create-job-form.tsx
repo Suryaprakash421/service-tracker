@@ -10,16 +10,19 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Button } from "./ui/button";
-import { getCustomerListAction } from "@/app/actions/customer";
+import {
+  getCustomerByIdAction,
+  getCustomerListAction,
+} from "@/app/actions/customer";
 import { useQuery } from "@tanstack/react-query";
 import { Customer } from "@/lib/types/customer";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-import { createJobAction } from "@/app/actions/job";
+import { createJobAction, getJobByIdAction } from "@/app/actions/job";
 import { showLoadingToast } from "@/lib/utils";
-import { useState } from "react";
+import React from "react";
 import { Textarea } from "./ui/textarea";
 import {
   Card,
@@ -30,11 +33,28 @@ import {
   CardTitle,
 } from "./ui/card";
 import { STATUS_DROPDOWN_OPTIONS } from "@/lib/constant";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 function CreateJobForm() {
-  const [customerValue, setCustomerValue] = useState<string>("");
+  const [customerValue, setCustomerValue] = React.useState<string>("");
+  const [isEditing, setIsEditing] = React.useState(false);
   const router = useRouter();
+  const { id } = useParams();
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  React.useEffect(() => {
+    if (id) {
+      setIsEditing(true);
+    }
+  }, [id]);
+
+  const hasEditMode = isEditing && !!id;
+
+  const { data: jobById } = useQuery({
+    queryKey: ["customers"],
+    queryFn: () => getJobByIdAction(id as string),
+    enabled: hasEditMode,
+  });
 
   const { data: customers, isLoading } = useQuery({
     queryKey: ["customers"],
@@ -43,6 +63,12 @@ function CreateJobForm() {
       return response.result.items as Customer[];
     },
   });
+
+  React.useEffect(() => {
+    if (hasEditMode && jobById) {
+      console.log("Setting customer value to:", jobById);
+    }
+  }, [jobById]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,7 +99,7 @@ function CreateJobForm() {
           Enter the details for the new service job.
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} ref={formRef}>
         <CardContent className="space-y-6">
           {/* Customer Field */}
           <div className="space-y-2">

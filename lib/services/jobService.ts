@@ -111,7 +111,7 @@ export async function listJobs(
 
 export async function getJob(id: string) {
   await dbConnect();
-  const doc = await Job.findById(id).populate("customer");
+  const doc = await Job.findById(id).populate("customer").lean();
   if (!doc) {
     const err: AppError = new Error("Job not found");
     err.code = 404;

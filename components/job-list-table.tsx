@@ -52,6 +52,7 @@ import { showLoadingToast } from "@/lib/utils";
 import Link from "next/link";
 import Search from "./ui/search";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useRouter } from "next/navigation";
 
 // Define the shape of our data
 interface Job {
@@ -66,7 +67,12 @@ interface Job {
   createdAt: string;
 }
 
-function ActionDropdown() {
+function ActionDropdown({ row }: { row: Row<Job> }) {
+  const router = useRouter();
+  const handleEdit = () => {
+    console.log("Editing job:", row.original._id);
+    router.push(`/app/job/${row.original._id}`);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -80,7 +86,7 @@ function ActionDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
       </DropdownMenuContent>
@@ -191,7 +197,11 @@ const JobListTable = () => {
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => <StatusDropdown row={row} callBack={refetch} />,
+        cell: ({ row }) => (
+          <div className="cursor-pointer">
+            <StatusDropdown row={row} callBack={refetch} />
+          </div>
+        ),
       },
       {
         accessorKey: "createdAt",
@@ -202,7 +212,7 @@ const JobListTable = () => {
       },
       {
         id: "actions",
-        cell: () => <ActionDropdown />,
+        cell: ({ row }) => <ActionDropdown row={row} />,
       },
     ],
     []

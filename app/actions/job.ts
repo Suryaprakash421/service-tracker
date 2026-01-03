@@ -3,6 +3,7 @@
 import {
   createJob,
   CreateJobInput,
+  getJob,
   listJobs,
   updateJobStatus,
 } from "@/lib/services/jobService";
@@ -58,4 +59,14 @@ export async function updateJobStatusAction(id: string, status: string) {
     const job = await updateJobStatus(id, status);
     return JSON.parse(JSON.stringify(job));
   }, "Job status updated successfully");
+}
+
+export async function getJobByIdAction(id: string) {
+  return asyncHandler(async () => {
+    const job = await getJob(id);
+    if (!job) {
+      throw new Error("Job not found");
+    }
+    return JSON.parse(JSON.stringify(job));
+  }, "Job fetched successfully");
 }
