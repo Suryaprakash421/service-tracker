@@ -1,11 +1,11 @@
 // In this file you can configure migrate-mongo
-require('dotenv').config({ path: '.env.local' });
+require('dotenv').config({ path: '.env' });
 require('dotenv').config();
 
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
-  console.error("\x1b[31m%s\x1b[0m", "ERROR: MONGODB_URI is not defined. Check your .env or .env.local file.");
+  console.error("\x1b[31m%s\x1b[0m", "ERROR: MONGODB_URI is not defined. Check your .env or .env file.");
   process.exit(1);
 }
 
