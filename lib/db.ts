@@ -6,12 +6,6 @@ dotenv.config({ path: ".env" });
 
 const MONGODB_URI = process.env.MONGODB_URI || "";
 
-if (!MONGODB_URI) {
-  throw new Error(
-    "Please define the MONGODB_URI environment variable inside .env.local"
-  );
-}
-
 interface MongooseCache {
   conn: typeof import("mongoose") | null;
   promise: Promise<typeof import("mongoose")> | null;
@@ -32,6 +26,12 @@ if (!cached) {
 async function dbConnect() {
   if (cached!.conn) {
     return cached!.conn;
+  }
+
+  if (!MONGODB_URI) {
+    throw new Error(
+      "Please define the MONGODB_URI environment variable inside .env.local"
+    );
   }
 
   if (!cached!.promise) {
